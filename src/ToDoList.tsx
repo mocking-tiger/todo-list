@@ -1,5 +1,6 @@
-import { FormEvent, useState } from "react";
+// import { FormEvent, useState } from "react";
 import { useForm } from "react-hook-form";
+import styled from "styled-components";
 
 // export default function ToDoList() {
 //   const [toDo, setToDo] = useState("");
@@ -32,20 +33,97 @@ import { useForm } from "react-hook-form";
 //   );
 // }
 
+const Div = styled.div`
+  width: 400px;
+  margin: 0 auto;
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 10px 20px;
+  display: block;
+`;
+
+// 스타일드 컴포넌트 영역 끝
+
+interface IFormData {
+  errors: {
+    email: {
+      message: string;
+    };
+  };
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  passwordRepeat: string;
+}
+
 export default function ToDoList() {
-  const { register, watch } = useForm();
-  console.log(watch());
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IFormData>();
+
+  const onValid = (data: any) => {
+    //console.log(data);
+  };
+
   return (
-    <div>
-      <form>
-        <input {...register("Email")} placeholder="이메일" />
-        <input {...register("firstName")} placeholder="성" />
-        <input {...register("lastName")} placeholder="이름" />
-        <input {...register("username")} placeholder="닉네임" />
-        <input {...register("password")} placeholder="비밀번호" />
-        <input {...register("passwordRepeat")} placeholder="비밀번호 재입력" />
+    <Div>
+      <Form onSubmit={handleSubmit(onValid)}>
+        <div>
+          <Input
+            {...register("email", {
+              required: "이메일을 입력해주세요.",
+              pattern: {
+                value: /^[A-Za-z0-9._%+-]+@naver.com$/,
+                message: "이메일은 네이버 계정만 가능",
+              },
+            })}
+            placeholder="이메일"
+          />
+          <span>{errors.email?.message}</span>
+        </div>
+        <div>
+          <Input
+            {...register("firstName", { required: "성을 입력해주세요." })}
+            placeholder="성"
+          />
+          <span>{errors.firstName?.message}</span>
+        </div>
+        <div>
+          <Input
+            {...register("lastName", { required: "이름을 입력해주세요." })}
+            placeholder="이름"
+          />
+          <span>{errors.lastName?.message}</span>
+        </div>
+        <div>
+          <Input
+            {...register("password", { required: "비밀번호를 입력해주세요." })}
+            placeholder="비밀번호"
+          />
+          <span>{errors.password?.message}</span>
+        </div>
+        <div>
+          <Input
+            {...register("passwordRepeat", {
+              required: "비밀번호를 한번 더 입력해주세요.",
+            })}
+            placeholder="비밀번호 재입력"
+          />
+          <span>{errors.passwordRepeat?.message}</span>
+        </div>
         <button>추가하기</button>
-      </form>
-    </div>
+      </Form>
+    </Div>
   );
 }
