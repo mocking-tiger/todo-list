@@ -2,36 +2,18 @@
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 
-// export default function ToDoList() {
-//   const [toDo, setToDo] = useState("");
-//   const [toDoError, setToDoError] = useState("");
+interface ISpanMessage {
+  $isMessage?: string;
+}
 
-//   const onChange = (e: FormEvent<HTMLInputElement>) => {
-//     const {
-//       currentTarget: { value },
-//     } = e;
-//     setToDo(value);
-//     setToDoError("");
-//   };
-
-//   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-//     if (toDo.length < 10) {
-//       return setToDoError("투두는 열글자 이상");
-//     }
-//     console.log("submit");
-//   };
-
-//   return (
-//     <div>
-//       <form onSubmit={onSubmit}>
-//         <input value={toDo} onChange={onChange} placeholder="할 일 작성" />
-//         <button>추가하기</button>
-//         {toDoError !== "" ? toDoError : null}
-//       </form>
-//     </div>
-//   );
-// }
+interface IFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  passwordRepeat: string;
+  extraError: string;
+}
 
 const Div = styled.div`
   width: 400px;
@@ -50,30 +32,31 @@ const Input = styled.input`
   display: block;
 `;
 
-// 스타일드 컴포넌트 영역 끝
+const Span = styled.span<ISpanMessage>`
+  margin-top: 5px;
+  display: ${(props) => (props.$isMessage === "" ? "none" : "block")};
+`;
 
-interface IFormData {
-  errors: {
-    email: {
-      message: string;
-    };
-  };
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  passwordRepeat: string;
-}
+// 스타일드 컴포넌트 영역 끝
 
 export default function ToDoList() {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<IFormData>();
 
-  const onValid = (data: any) => {
+  const onValid = (data: IFormData) => {
     //console.log(data);
+    if (data.password !== data.passwordRepeat) {
+      setError(
+        "passwordRepeat",
+        { message: "비밀번호가 일치하지 않습니다." },
+        { shouldFocus: true }
+      );
+    }
+    // setError("extraError", { message: "서버에러" });
   };
 
   return (
@@ -81,37 +64,60 @@ export default function ToDoList() {
       <Form onSubmit={handleSubmit(onValid)}>
         <div>
           <Input
+            type="email"
             {...register("email", {
               required: "이메일을 입력해주세요.",
               pattern: {
-                value: /^[A-Za-z0-9._%+-]+@naver.com$/,
-                message: "이메일은 네이버 계정만 가능",
+                value: /^[A-Za-z0-9@.]+$/,
+                message: "이메일은 영문대소문자, 숫자만 가능합니다.",
               },
             })}
             placeholder="이메일"
           />
-          <span>{errors.email?.message}</span>
+          <Span $isMessage={errors?.email?.message || ""}>
+            {errors?.email?.message}
+          </Span>
         </div>
         <div>
           <Input
             {...register("firstName", { required: "성을 입력해주세요." })}
             placeholder="성"
           />
-          <span>{errors.firstName?.message}</span>
+          <Span $isMessage={errors?.firstName?.message || ""}>
+            {errors?.firstName?.message}
+          </Span>
         </div>
         <div>
           <Input
-            {...register("lastName", { required: "이름을 입력해주세요." })}
+            {...register("lastName", {
+              required: "이름을 입력해주세요.",
+              validate: {
+                noCriminal: (value) =>
+                  value.includes("범죄자")
+                    ? "범죄자는 가입할 수 없습니다."
+                    : true,
+              },
+            })}
             placeholder="이름"
           />
-          <span>{errors.lastName?.message}</span>
+          <Span $isMessage={errors?.lastName?.message || ""}>
+            {errors?.lastName?.message}
+          </Span>
         </div>
         <div>
           <Input
-            {...register("password", { required: "비밀번호를 입력해주세요." })}
+            {...register("password", {
+              required: "비밀번호를 입력해주세요.",
+              minLength: {
+                value: 6,
+                message: "비밀번호는 여섯글자 이상 입력해주세요.",
+              },
+            })}
             placeholder="비밀번호"
           />
-          <span>{errors.password?.message}</span>
+          <Span $isMessage={errors?.password?.message || ""}>
+            {errors?.password?.message}
+          </Span>
         </div>
         <div>
           <Input
@@ -120,9 +126,12 @@ export default function ToDoList() {
             })}
             placeholder="비밀번호 재입력"
           />
-          <span>{errors.passwordRepeat?.message}</span>
+          <Span $isMessage={errors?.passwordRepeat?.message || ""}>
+            {errors?.passwordRepeat?.message}
+          </Span>
         </div>
         <button>추가하기</button>
+        <Span>{errors?.extraError?.message}</Span>
       </Form>
     </Div>
   );
