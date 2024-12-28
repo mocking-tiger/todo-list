@@ -1,5 +1,5 @@
 import { MouseEvent } from "react";
-import { IToDo, toDoState } from "../atoms";
+import { Categories, IToDo, toDoState } from "../atoms";
 import { useSetRecoilState } from "recoil";
 
 export default function ToDo({ text, category, id }: IToDo) {
@@ -11,7 +11,7 @@ export default function ToDo({ text, category, id }: IToDo) {
     } = event;
     setToDos((oldToDos) => {
       const targetIndex = oldToDos.findIndex((toDo) => toDo.id === id);
-      const newToDo = { text, id, category: name as IToDo["category"] };
+      const newToDo = { text, id, category: name as Categories };
       return [
         ...oldToDos.slice(0, targetIndex),
         newToDo,
@@ -22,18 +22,18 @@ export default function ToDo({ text, category, id }: IToDo) {
   return (
     <li>
       <span>{text}</span>
-      {category !== "DOING" && (
-        <button name="DOING" onClick={onClick}>
+      {category !== Categories.DOING && (
+        <button name={Categories.DOING} onClick={onClick}>
           Doing
         </button>
       )}
-      {category !== "TODO" && (
-        <button name="TODO" onClick={onClick}>
+      {category !== Categories.TODO && (
+        <button name={Categories.TODO} onClick={onClick}>
           To Do
         </button>
       )}
-      {category !== "DONE" && (
-        <button name="DONE" onClick={onClick}>
+      {category !== Categories.DONE && (
+        <button name={Categories.DONE} onClick={onClick}>
           Done
         </button>
       )}
