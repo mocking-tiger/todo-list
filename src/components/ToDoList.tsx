@@ -1,7 +1,7 @@
 import CreateToDo from "./CreateToDo";
 import ToDo from "./ToDo";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { categoryState, toDoSelector } from "../atoms";
+import { categories, categoryState, toDoSelector } from "../atoms";
 import { FormEvent } from "react";
 
 export default function ToDoList() {
@@ -10,7 +10,7 @@ export default function ToDoList() {
 
   const onInput = (event: FormEvent<HTMLSelectElement>) => {
     // console.log(event.currentTarget.value);
-    setCategory(event.currentTarget.value);
+    setCategory(event.currentTarget.value as categories);
   };
 
   return (
