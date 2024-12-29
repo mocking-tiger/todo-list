@@ -19,6 +19,11 @@ export default function ToDo({ text, category, id }: IToDo) {
       ];
     });
   };
+
+  const handleDelete = () => {
+    setToDos((prev) => prev.filter((todo) => todo.id !== id));
+  };
+
   return (
     <li>
       <span>{text}</span>
@@ -37,6 +42,9 @@ export default function ToDo({ text, category, id }: IToDo) {
           Done
         </button>
       )}
+      <button style={{ color: "red" }} onClick={handleDelete}>
+        delete
+      </button>
     </li>
   );
 }

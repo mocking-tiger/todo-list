@@ -12,7 +12,7 @@ export default function ToDoList() {
     // console.log(event.currentTarget.value);
     setCategory(event.currentTarget.value as Categories);
   };
-
+  console.log(toDos);
   return (
     <div>
       <h1>To Dos</h1>
